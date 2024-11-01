@@ -1,10 +1,10 @@
-# My Express App
+# U-ROOM Services
 
 ![U-ROOM Services](https://via.placeholder.com/800x200.png?text=U-ROOM+Services)
 
 ## Deskripsi
 
-My Express App adalah aplikasi sederhana yang dibangun menggunakan Express.js. Aplikasi ini mendukung migrasi database dan seeding untuk lingkungan pengembangan dan produksi. Dokumentasi API dapat diakses melalui endpoint `/api-docs`.
+U-ROOM Services adalah aplikasi sederhana yang dibangun menggunakan Express.js. Aplikasi ini mendukung migrasi database dan seeding untuk lingkungan pengembangan dan produksi. Dokumentasi API dapat diakses melalui endpoint `/api-docs`.
 
 ## Persyaratan
 

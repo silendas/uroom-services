@@ -1,6 +1,6 @@
 # My Express App
 
-![My Express App](https://via.placeholder.com/800x200.png?text=My+Express+App)
+![U-ROOM](https://via.placeholder.com/800x200.png?text=U-ROOM)
 
 ## Deskripsi
 

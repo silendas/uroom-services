@@ -56,7 +56,7 @@ U-ROOM Services adalah aplikasi sederhana yang dibangun menggunakan Express.js. 
 
 ## Dokumentasi API
 
-Untuk mengunjungi dokumentasi API, buka browser Anda dan akses endpoint /api-docs
+Untuk mengunjungi dokumentasi API, buka browser Anda dan akses endpoint `/api-docs`.
 
 > **Catatan:** Pastikan Anda telah mengatur database dan variabel lingkungan yang diperlukan sebelum menjalankan aplikasi.
 

@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const config = require('./config/config');
@@ -47,7 +49,7 @@ const swaggerOptions = {
     servers: [
       {
         url: process.env.NODE_ENV === 'production' 
-        ? 'https://your-domain.com'
+        ? process.env.PROD_URL
         : `http://localhost:${config.port}`,
       },
     ],

@@ -1,0 +1,38 @@
+{
+  "name": "my-express-app",
+  "version": "1.0.0",
+  "description": "A simple Express application",
+  "main": "src/app.js",
+  "scripts": {
+    "migrate:dev": "npx sequelize-cli db:migrate",
+    "migrate:prod": "npx sequelize-cli db:migrate --env production",
+    "seed:dev": "npx sequelize-cli db:seed:all",
+    "seed:prod": "npx sequelize-cli db:seed:all --env production",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "migrate:undo:all": "npx sequelize-cli db:migrate:undo:all",
+    "start": "node src/app.js",
+    "dev": "cross-env NODE_ENV=development node src/app.js",
+    "prod": "cross-env NODE_ENV=production node src/app.js",
+    "update-config": "node scripts/updateConfig.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.17.1",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "my-express-app": "file:",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.6.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.7"
+  },
+  "author": "",
+  "license": "ISC"
+}

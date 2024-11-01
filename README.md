@@ -15,8 +15,8 @@ My Express App adalah aplikasi sederhana yang dibangun menggunakan Express.js. A
 
 1. Clone repositori ini:
    ```bash
-   git clone https://github.com/username/my-express-app.git
-   cd my-express-app
+   git clone https://github.com/silendas/uroom-services.git
+   cd uroom-services
    ```
 
 2. Instal dependensi:

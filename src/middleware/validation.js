@@ -77,4 +77,20 @@ const validatePost = [
     },
   ];
 
-module.exports = { validateCreateUser, validateUpdateUser, validateLogin, validateRegister, validatePost };
+const validateReply = [
+  body('postId').notEmpty().withMessage('Post ID is required')
+    .isInt().withMessage('Post ID must be an integer'),
+  body('message').notEmpty().withMessage('Reply message is required'),
+  body('parentReplyId')
+    .optional()
+    .isInt().withMessage('Parent reply ID must be an integer'),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return errorResponse(res, responseMessage.BAD_REQUEST.message, responseMessage.BAD_REQUEST.status, errors.array());
+    }
+    next();
+  },
+];
+
+module.exports = { validateCreateUser, validateUpdateUser, validateLogin, validateRegister, validatePost, validateReply };

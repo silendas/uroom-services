@@ -2,8 +2,10 @@
 
 const replyService = require('../services/replyService');
 const { formatReplyResponse } = require('../response/replyResponse');
+const { successResponse, errorResponse } = require('../utils/responseHelper');
+const responseMessage = require('../utils/responseMassage');
 
-const createReply = async (req, res, next) => {
+const createReply = async (req, res) => {
   try {
     const replyData = {
       ...req.body,
@@ -14,44 +16,68 @@ const createReply = async (req, res, next) => {
     const reply = await replyService.createReply(replyData, req.files);
     const formattedReply = formatReplyResponse(reply, req.user.id);
     
-    res.status(201).json({
-      status: 'success',
-      data: formattedReply
-    });
+    return successResponse(
+      res,
+      responseMessage.PROCESS_SUCCESS.message,
+      formattedReply,
+      responseMessage.PROCESS_SUCCESS.status
+    );
   } catch (error) {
-    next(error);
+    console.error('Error creating reply:', error.message);
+    return errorResponse(
+      res,
+      responseMessage.BAD_REQUEST.message,
+      responseMessage.BAD_REQUEST.status,
+      error
+    );
   }
 };
 
-const getRepliesByPostId = async (req, res, next) => {
+const getRepliesByPostId = async (req, res) => {
   try {
     const replies = await replyService.getRepliesByPostId(req.params.postId);
     const formattedReplies = formatReplyResponse(replies, req.user.id);
     
-    res.json({
-      status: 'success',
-      data: formattedReplies
-    });
+    return successResponse(
+      res,
+      responseMessage.PROCESS_SUCCESS.message,
+      formattedReplies,
+      responseMessage.PROCESS_SUCCESS.status
+    );
   } catch (error) {
-    next(error);
+    console.error('Error getting replies by post id:', error.message);
+    return errorResponse(
+      res,
+      responseMessage.BAD_REQUEST.message,
+      responseMessage.BAD_REQUEST.status,
+      error
+    );
   }
 };
 
-const getRepliesByParentId = async (req, res, next) => {
+const getRepliesByParentId = async (req, res) => {
   try {
     const replies = await replyService.getRepliesByParentId(req.params.parentId);
     const formattedReplies = formatReplyResponse(replies, req.user.id);
     
-    res.json({
-      status: 'success',
-      data: formattedReplies
-    });
+    return successResponse(
+      res,
+      responseMessage.PROCESS_SUCCESS.message,
+      formattedReplies,
+      responseMessage.PROCESS_SUCCESS.status
+    );
   } catch (error) {
-    next(error);
+    console.error('Error getting replies by parent id:', error.message);
+    return errorResponse(
+      res,
+      responseMessage.BAD_REQUEST.message,
+      responseMessage.BAD_REQUEST.status,
+      error
+    );
   }
 };
 
-const updateReply = async (req, res, next) => {
+const updateReply = async (req, res) => {
   try {
     const data = {
       ...req.body,
@@ -61,24 +87,40 @@ const updateReply = async (req, res, next) => {
     const reply = await replyService.updateReply(req.params.id, data, req.files);
     const formattedReply = formatReplyResponse(reply, req.user.id);
     
-    res.json({
-      status: 'success',
-      data: formattedReply
-    });
+    return successResponse(
+      res,
+      responseMessage.PROCESS_SUCCESS.message,
+      formattedReply,
+      responseMessage.PROCESS_SUCCESS.status
+    );
   } catch (error) {
-    next(error);
+    console.error('Error updating reply:', error.message);
+    return errorResponse(
+      res,
+      responseMessage.BAD_REQUEST.message,
+      responseMessage.BAD_REQUEST.status,
+      error
+    );
   }
 };
 
-const deleteReply = async (req, res, next) => {
+const deleteReply = async (req, res) => {
   try {
     await replyService.deleteReply(req.params.id, req.user.username);
-    res.json({
-      status: 'success',
-      message: 'Reply berhasil dihapus'
-    });
+    return successResponse(
+      res,
+      responseMessage.PROCESS_SUCCESS.message,
+      null,
+      responseMessage.PROCESS_SUCCESS.status
+    );
   } catch (error) {
-    next(error);
+    console.error('Error deleting reply:', error.message);
+    return errorResponse(
+      res,
+      responseMessage.BAD_REQUEST.message,
+      responseMessage.BAD_REQUEST.status,
+      error
+    );
   }
 };
 

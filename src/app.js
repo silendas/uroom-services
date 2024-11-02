@@ -12,6 +12,7 @@ const homeRoutes = require('./routes/homeRoutes');
 const postRoutes = require('./routes/postRoutes');
 const postLikeRoutes = require('./routes/postLikeRoutes');
 const replyRoutes = require('./routes/replyRoutes');
+const replyLikeRoutes = require('./routes/replyLikeRoutes');
 const auth = require('./middleware/auth');
 const notFound = require('./handler/notFoundHandler');
 const errorHandler = require('./handler/errorHandler');
@@ -37,6 +38,7 @@ app.use('/users', auth, userRoutes);
 app.use('/posts', auth, postRoutes);
 app.use('/post-likes', auth, postLikeRoutes);
 app.use('/replies', auth, replyRoutes);
+app.use('/reply-likes', auth, replyLikeRoutes);
 
 // Home Routes
 app.use('/', homeRoutes);

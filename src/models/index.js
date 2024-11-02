@@ -8,8 +8,9 @@ const PostAttachment = require("./postAttachmentModel");
 const Attachment = require("./attachmentModel");
 const Reply = require("./replyModel");
 const ReplyAttachment = require("./replyAttachmentModel");
+const ReplyLike = require("./replyLikeModel");
 
-// Definisi Relasi
+// Relation Definitions
 const defineAssociations = () => {
   // User & Role Relations
   User.belongsTo(Role, {
@@ -68,12 +69,17 @@ const defineAssociations = () => {
     foreignKey: "attachment_id",
     as: "replyAttachments",
   });
+
+  // Reply & ReplyLike Relations
+  Reply.hasMany(ReplyLike, { foreignKey: "reply_id", as: "likes" });
+  ReplyLike.belongsTo(Reply, { foreignKey: "reply_id" });
+  ReplyLike.belongsTo(User, { foreignKey: "user_id" });
 };
 
-// Jalankan definisi relasi
+// Run Definitions
 defineAssociations();
 
-// Export semua model
+// Export all models
 module.exports = {
   User,
   Role,
@@ -83,4 +89,5 @@ module.exports = {
   Attachment,
   Reply,
   ReplyAttachment,
+  ReplyLike,
 };

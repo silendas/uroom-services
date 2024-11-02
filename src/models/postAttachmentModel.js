@@ -16,12 +16,7 @@ class PostAttachment extends BaseModel {
         type: DataTypes.INTEGER,
         allowNull: false,
         field: "attachment_id"
-      },
-      isDeleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        field: "is_deleted",
-      },
+      }
     }, {
       sequelize,
       modelName: "PostAttachment",

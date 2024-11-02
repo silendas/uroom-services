@@ -4,34 +4,45 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const formatPostResponse = (postModel, currentUserId) => {
+const formatReplyResponse = (replyModel, currentUserId) => {
   try {
-    if (Array.isArray(postModel)) {
-      return postModel.map(post => formatSinglePost(post, currentUserId));
+    if (Array.isArray(replyModel)) {
+      return replyModel.map(reply => formatSingleReply(reply, currentUserId));
     } else {
-      return formatSinglePost(postModel, currentUserId);
+      return formatSingleReply(replyModel, currentUserId);
     }
   } catch (error) {
-    console.error('Error formatting post response:', error);
+    console.error('Error formatting reply response:', error);
     return null;
   }
 };
 
-const formatSinglePost = (post, currentUserId) => {
-  if (!post) return null;
+const formatSingleReply = (reply, currentUserId) => {
+  if (!reply) return null;
 
-  const { id, title, content, PostAttachments, createdAt, updatedAt, user, likes, replies } = post;
+  const { 
+    id, 
+    postId,
+    parentReplyId,
+    message, 
+    ReplyAttachments, 
+    createdAt, 
+    updatedAt, 
+    user, 
+    likes,
+    childReplies 
+  } = reply;
   
   // Format attachments dengan URL yang sesuai environment
   const baseUrl = process.env.NODE_ENV === 'production' 
     ? process.env.PROD_URL 
     : `http://localhost:${process.env.PORT}`;
 
-  const attachments = PostAttachments?.map(pa => ({
-    id: pa.id,
-    fileName: pa.attachment.fileName,
-    filePath: pa.attachment.filePath,
-    url: `${baseUrl}/${pa.attachment.filePath}`
+  const attachments = ReplyAttachments?.map(ra => ({
+    id: ra.id,
+    fileName: ra.attachment.fileName,
+    filePath: ra.attachment.filePath,
+    url: `${baseUrl}/${ra.attachment.filePath}`
   })) || [];
 
   // Hitung likes dan dislikes
@@ -45,13 +56,14 @@ const formatSinglePost = (post, currentUserId) => {
     isDislike: likes?.some(like => like.likeType === 'dislike' && like.userId === currentUserId) || false
   };
 
-  // Hitung replies
-  const repliesCount = replies?.filter(reply => reply.parentReplyId === null).length || 0;
+  // Hitung child replies jika ada
+  const childRepliesCount = childReplies?.length || 0;
 
   return {
     id,
-    title,
-    content,
+    postId,
+    parentReplyId,
+    message,
     attachments,
     author: user ? {
       id: user.id,
@@ -61,11 +73,11 @@ const formatSinglePost = (post, currentUserId) => {
     interactions: {
       likes: likesCount,
       dislikes: dislikesCount,
-      repliesCount
+      childRepliesCount
     },
     createdAt,
     updatedAt
   };
 };
 
-module.exports = { formatPostResponse };
+module.exports = { formatReplyResponse }; 

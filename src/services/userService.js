@@ -4,32 +4,32 @@ const { User, Role } = require("../models");
 const { getDefaultFilter, getSearchUser } = require("../utils/filterRequest");
 const bcrypt = require("bcrypt");
 
-const getAllUsers = async (pagination = false, page = 1, size = 10, search, approved = null) => {
-  const defaultFilter = getDefaultFilter();
-  
-  defaultFilter.where = {
-    ...defaultFilter.where,
-    ...getSearchUser(search)
-  };
-  
-  if (approved !== null) {
-    defaultFilter.where.approved = approved;
-  }
+// Fungsi helper untuk include role
+const roleInclude = {
+  model: Role,
+  as: "role", 
+  attributes: ["id", "name"],
+  required: false
+};
 
-  const includeRole = {
-    model: Role,
-    as: "role",
-    attributes: ["id", "name"],
-    required: false,
+// Get semua user dengan filter dan pagination
+const getAllUsers = async (pagination = false, page = 1, size = 10, search, approved = null) => {
+  const filter = {
+    ...getDefaultFilter(),
+    where: {
+      ...getDefaultFilter().where,
+      ...getSearchUser(search),
+      ...(approved !== null && { approved })
+    }
   };
 
   if (pagination === "true") {
     const offset = (page - 1) * size;
     const { count, rows } = await User.findAndCountAll({
-      ...defaultFilter,
-      include: [includeRole],
+      ...filter,
+      include: [roleInclude],
       limit: parseInt(size),
-      offset: offset,
+      offset
     });
 
     return {
@@ -39,65 +39,60 @@ const getAllUsers = async (pagination = false, page = 1, size = 10, search, appr
         size: parseInt(size),
         totalElements: count,
         isFirst: page === 1,
-        isLast: page >= Math.ceil(count / size),
-      },
+        isLast: page >= Math.ceil(count / size)
+      }
     };
-  } else {
-    const users = await User.findAll({
-      ...defaultFilter,
-      include: [includeRole],
-    });
-    return users;
   }
+
+  return User.findAll({
+    ...filter,
+    include: [roleInclude]
+  });
 };
 
+// Buat user baru
 const createUser = async (userData, req) => {
-    if (userData.password) {
-      userData.password = await bcrypt.hash(userData.password, 10);
-    }
-    
-    return await User.create({
-      ...userData,
-      approved: true,
-      actived: true,
-      createdBy: req.user.id,
-    });
+  if (userData.password) {
+    userData.password = await bcrypt.hash(userData.password, 10);
+  }
+  
+  return User.create({
+    ...userData,
+    approved: true,
+    actived: true,
+    createdBy: req.user.id
+  });
 };
 
+// Update user
 const updateUser = async (id, userData, req) => {
   if (userData.password) {
     const user = await User.findByPk(id);
-    if (!user) {
-      throw new Error('User not found');
-    }
-    
+    if (!user) throw new Error('User not found');
     userData.password = await bcrypt.hash(userData.password, 10);
   }
 
-  return await User.update({
+  return User.update({
     ...userData,
-    updatedBy: req.user.id, 
+    updatedBy: req.user.id
   }, { 
     where: { id } 
   });
 };
 
-const deleteUser = async (id, req) => {
-  return await User.update({ deleted: true }, { 
-    where: { id },
-  });
+// Hapus user (soft delete)
+const deleteUser = async (id) => {
+  return User.update(
+    { deleted: true }, 
+    { where: { id } }
+  );
 };
 
+// Get user by ID
 const getUserById = async (id) => {
-  return await User.findOne({
+  return User.findOne({
     where: { id, deleted: false },
-    include: [
-      {
-        model: Role,
-        as: "role",
-        attributes: ["id", "name"],
-      },
-    ],
+    include: [roleInclude]
   });
 };
 
@@ -106,5 +101,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  getUserById,
+  getUserById
 };

@@ -26,10 +26,6 @@ module.exports = {
           key: 'id',
         },
       },
-      is_deleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,

@@ -34,7 +34,7 @@ const getAllUsers = async (req, res) => {
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
-    console.error('Error in getAllUsers:', error);
+    console.error('Error in getAllUsers:', error.message);
     return errorResponse(
       res, 
       responseMessage.INTERNAL_SERVER_ERROR.message, 
@@ -62,7 +62,7 @@ const getUserById = async (req, res) => {
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
-    console.error('Error in getUserById:', error);
+    console.error('Error in getUserById:', error.message);
     return errorResponse(
       res, 
       responseMessage.INTERNAL_SERVER_ERROR.message, 
@@ -82,7 +82,7 @@ const createUser = async (req, res) => {
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
-    console.error('Error in createUser:', error);
+    console.error('Error in createUser:', error.message);
     return errorResponse(
       res, 
       responseMessage.BAD_REQUEST.message, 
@@ -110,7 +110,7 @@ const updateUser = async (req, res) => {
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
-    console.error('Error in updateUser:', error);
+    console.error('Error in updateUser:', error.message);
     return errorResponse(
       res, 
       responseMessage.BAD_REQUEST.message, 
@@ -138,7 +138,7 @@ const deleteUser = async (req, res) => {
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
-    console.error('Error in deleteUser:', error);
+    console.error('Error in deleteUser:', error.message);
     return errorResponse(
       res, 
       responseMessage.BAD_REQUEST.message, 

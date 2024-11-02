@@ -30,7 +30,7 @@ const auth = async (req, res, next) => {
     // Verifikasi token
     const decoded = jwt.verify(token, process.env.JWT_SECRET, { 
       algorithms: ['HS256'],
-      maxAge: '24h' // Tambahkan validasi umur token
+      maxAge: '24h' // 24 Jam Kadaluarsa
     });
     
     if (!decoded?.id || typeof decoded.id !== 'number') {

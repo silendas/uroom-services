@@ -4,17 +4,17 @@ const { DataTypes } = require('sequelize');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Replies', {
+    await queryInterface.createTable('Reply_Likes', {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      post_id: {
+      reply_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'Posts',
+          model: 'Replies',
           key: 'id',
         },
       },
@@ -26,16 +26,8 @@ module.exports = {
           key: 'id',
         },
       },
-      parent_reply_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Replies',
-          key: 'id',
-        },
-      },
-      message: {
-        type: DataTypes.TEXT,
+      like_type: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
       created_at: {
@@ -64,6 +56,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Replies');
+    await queryInterface.dropTable('Reply_Likes');
   }
 };

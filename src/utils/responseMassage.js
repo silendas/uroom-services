@@ -1,7 +1,7 @@
-'use strict';
-
+"use strict";
+    
 const responseMessage = {
-  PROCESS_SUCCESS: { message: 'Process Success', status: 200 },
+  PROCESS_SUCCESS: { message: "Process Success", status: 200 },
   INVALID_DATA: { message: 'Invalid Data', status: 400 },
   UNAUTHORIZED: { message: 'Unauthorized', status: 401 },
   INVALID_TOKEN: { message: 'Invalid Token', status: 400 },
@@ -16,6 +16,7 @@ const responseMessage = {
   SERVICE_UNAVAILABLE: { message: 'Service Unavailable', status: 503 },
   NOT_LOGGED_IN: { message: 'Please log in to access this resource', status: 401 },
   NOT_ACCESS: { message: 'Access Denied', status: 403 },
+  MAX_FILE_LIMIT: { message: 'Maximum file limit reached', status: 400 },
 };
 
 module.exports = responseMessage;

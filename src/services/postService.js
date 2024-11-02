@@ -1,116 +1,150 @@
-'use strict';
+"use strict";
 
-const { Post, User, PostAttachment, Attachment } = require('../models');
-const { uploadFile } = require('../utils/fileHandler');
+const {
+  Post,
+  User,
+  PostAttachment, 
+  Attachment,
+  PostLike,
+  Reply
+} = require("../models");
+const { uploadFile, deleteFile } = require("../utils/fileHandler");
+
+// Fungsi helper untuk menyimpan attachment
+const saveAttachment = async (file, postId, userId) => {
+  const { fileName, filePath } = await uploadFile(file, "posts", postId);
+  
+  const attachment = await Attachment.create({
+    fileName,
+    filePath, 
+    createdBy: userId
+  });
+
+  await PostAttachment.create({
+    postId,
+    attachmentId: attachment.id,
+    createdBy: userId
+  });
+};
+
+// Fungsi helper untuk include relations
+const includeRelations = {
+  include: [
+    {
+      model: User,
+      as: "user",
+      attributes: ["id", "name", "npm"]
+    },
+    {
+      model: PostAttachment,
+      as: "PostAttachments",
+      where: { deleted: false },
+      include: [{
+        model: Attachment,
+        as: "attachment"
+      }],
+      required: false
+    },
+    {
+      model: PostLike,
+      as: "likes", 
+      where: { deleted: false },
+      attributes: ['id', 'userId', 'likeType'],
+      required: false
+    },
+    {
+      model: Reply,
+      as: "replies",
+      where: {
+        parentReplyId: null,
+        deleted: false
+      },
+      required: false
+    }
+  ]
+};
 
 const createPost = async (postData, files) => {
-  try {
-    // Tambahkan created_by dari userId
-    const post = await Post.create({
-      ...postData
-    });
-    
-    // Upload dan simpan attachments jika ada
-    if (files && files.length > 0) {
-      for (const file of files) {
-        const { fileName, filePath } = await uploadFile(file, 'posts', post.id);
-        
-        // Simpan attachment dengan created_by
-        const attachment = await Attachment.create({
-          fileName,
-          filePath,
-          createdBy: postData.createdBy
-        });
-        
-        // Buat relasi di post_attachments dengan created_by
-        await PostAttachment.create({
-          postId: post.id,
-          attachmentId: attachment.id,
-          createdBy: postData.createdBy
-        });
-      }
-    }
-    
-    // Ambil post dengan attachments
-    return await Post.findOne({
-      where: { id: post.id },
-      include: [
-        {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'name', 'npm']
-        },
-        {
-          model: PostAttachment,
-          as: 'PostAttachments',
-          include: [{
-            model: Attachment,
-            as: 'attachment'
-          }]
-        }
-      ]
-    });
-  } catch (error) {
-    throw error;
+  const post = await Post.create(postData);
+  
+  if (files?.length) {
+    await Promise.all(files.map(file => 
+      saveAttachment(file, post.id, postData.createdBy)
+    ));
   }
+  
+  return post;
 };
 
 const getAllPosts = async () => {
-  return await Post.findAll({
-    include: [
-        {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'name', 'npm']
-        },
-        {
-          model: PostAttachment,
-          as: 'PostAttachments',
-          include: [{
-            model: Attachment,
-            as: 'attachment'
-          }]
-        }
-      ]
+  return Post.findAll({
+    where: { deleted: false },
+    ...includeRelations,
+    order: [['createdAt', 'DESC']]
   });
 };
 
 const getPostById = async (id) => {
-  return await Post.findOne({ 
-    where: { id },
-    include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: ['id', 'name', 'npm']
-      },
-      {
-        model: PostAttachment,
-        as: 'PostAttachments',
-        include: [{
-          model: Attachment,
-          as: 'attachment'
-        }]
-      }
-    ]
+  return Post.findOne({
+    where: { id, deleted: false },
+    ...includeRelations
   });
 };
 
-const updatePost = async (id, data) => {
+const updatePost = async (id, data, files, removedPostAttachmentIds = []) => {
   const post = await Post.findByPk(id);
-  if (!post) throw new Error('Post not found');
-  return await post.update(data);
+  if (!post) throw new Error("Post tidak ditemukan");
+
+  await post.update(data);
+
+  // Handle hapus file
+  if (removedPostAttachmentIds.length) {
+    await Promise.all(removedPostAttachmentIds.map(async (attachId) => {
+      const postAttachment = await PostAttachment.findOne({
+        where: { id: attachId, postId: id, deleted: false },
+        include: [{ model: Attachment, as: 'attachment' }]
+      });
+
+      if (postAttachment) {
+        await Promise.all([
+          postAttachment.update({ deleted: true, updatedBy: data.updatedBy }),
+          postAttachment.attachment.update({ deleted: true, updatedBy: data.updatedBy }),
+          deleteFile('posts', id, postAttachment.attachment.fileName)
+        ]);
+      }
+    }));
+  }
+
+  // Handle file baru
+  if (files?.length) {
+    await Promise.all(files.map(file => 
+      saveAttachment(file, post.id, data.updatedBy)
+    ));
+  }
+
+  return post;
 };
 
-const deletePost = async (id) => {
+const deletePost = async (id, username) => {
   const post = await Post.findByPk(id);
-  if (!post) throw new Error('Post not found');
-  return await post.destroy();
+  if (!post) throw new Error("Post tidak ditemukan");
+
+  await post.update({ deleted: true, updatedBy: username });
+
+  const attachments = await PostAttachment.findAll({
+    where: { postId: id, deleted: false }
+  });
+
+  await Promise.all(attachments.map(attachment =>
+    attachment.update({ deleted: true, updatedBy: username })
+  ));
+
+  return post;
 };
 
 module.exports = {
   getAllPosts,
-  getPostById,
+  getPostById, 
   createPost,
   updatePost,
   deletePost

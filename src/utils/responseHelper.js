@@ -37,13 +37,18 @@ const successResponse = (
       data,
     });
   }
-  return res.status(status).json(createResponse(message, status, data));
+  return res.status(200).json(createResponse(message, status, data));
 };
 
 const errorResponse = (res, message, status = 500, errors = null) => {
   if (errors instanceof Error) {
+    const isSequelizeError = [
+      'SequelizeValidationError',
+      'SequelizeUniqueConstraintError'
+    ].includes(errors.name);
+
     // Handling Sequelize ValidationError
-    if (errors.name === 'SequelizeValidationError' || errors.name === 'SequelizeUniqueConstraintError') {
+    if (isSequelizeError) {
       const validationErrors = errors.errors.map(err => ({
         msg: err.message,
         field: err.path,
@@ -56,13 +61,13 @@ const errorResponse = (res, message, status = 500, errors = null) => {
 
     // Handling umum untuk error lainnya
     const errorDetail = {
-      message: errors.message,
+      msg: errors.message,
       ...(process.env.NODE_ENV === "development" && { stack: errors.stack })
     };
     
     return res.status(status).json(createResponse(message, status, null, errorDetail));
   }
-  return res.status(status).json(createResponse(message, status, null, errors));
+  return res.status(200).json(createResponse(message, status, null, errors));
 };
 
 module.exports = { successResponse, errorResponse };

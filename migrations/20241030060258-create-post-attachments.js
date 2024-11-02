@@ -26,7 +26,7 @@ module.exports = {
           key: 'id',
         },
       },
-      is_deleted: {
+      deleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
@@ -47,11 +47,7 @@ module.exports = {
       updated_by: {
         type: DataTypes.STRING,
         allowNull: true,
-      },
-      deleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
+      }
     });
   },
 

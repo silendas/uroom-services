@@ -39,12 +39,7 @@ class Reply extends BaseModel {
       message: {
         type: DataTypes.TEXT,
         allowNull: false,
-      },
-      isDeleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        field: "is_deleted",
-      },
+      }
     }, {
       sequelize,
       modelName: 'Reply',

@@ -15,7 +15,7 @@ const register = async (req, res) => {
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
-    console.error('Register error:', error);
+    console.error('Register error:', error.message);
     return errorResponse(
       res, 
       responseMessage.BAD_REQUEST.message, 

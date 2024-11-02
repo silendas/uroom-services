@@ -40,16 +40,16 @@ const loginUser = async (username, password, res) => {
     });
 
     if (!user) {
-      return errorResponse(res, "Invalid username/email", responseMessage.BAD_REQUEST.status);
+      return successResponse(res, "Invalid username/email", null, responseMessage.BAD_REQUEST.status);
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return errorResponse(res, "Invalid password", responseMessage.BAD_REQUEST.status);
+      return successResponse(res, "Invalid password", null, responseMessage.BAD_REQUEST.status);
     }
 
     if (!user.approved) {
-      return errorResponse(res, "User is not approved", responseMessage.BAD_REQUEST.status);
+      return successResponse(res, "User is not approved", null, responseMessage.BAD_REQUEST.status);
     }
 
     const formatedUser = formatUserResponse(user);
@@ -60,7 +60,7 @@ const loginUser = async (username, password, res) => {
 
     return { token, user: formatUserResponse(formatedUser) };
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error:', error.message);
     return errorResponse(res, responseMessage.INTERNAL_SERVER_ERROR.message, responseMessage.INTERNAL_SERVER_ERROR.status, error);
   }
 };

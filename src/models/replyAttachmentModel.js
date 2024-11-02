@@ -26,12 +26,7 @@ class ReplyAttachment extends BaseModel {
           model: Attachment,
           key: 'id',
         }
-      },
-      isDeleted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        field: 'is_deleted'
-      },
+      }
     }, {
       sequelize,
       modelName: 'ReplyAttachment',

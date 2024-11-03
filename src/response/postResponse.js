@@ -31,7 +31,8 @@ const formatSinglePost = (post, currentUserId) => {
     id: pa.id,
     fileName: pa.attachment.fileName,
     filePath: pa.attachment.filePath,
-    url: `${baseUrl}/${pa.attachment.filePath}`
+    url: `${baseUrl}/${pa.attachment.filePath}`,
+    downloadUrl: `${baseUrl}/download/${ra.attachment.filePath}`
   })) || [];
 
   // Hitung likes dan dislikes

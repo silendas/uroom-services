@@ -106,15 +106,37 @@ const getRepliesByPostId = async (postId, pagination = false, page = 1, size = 1
   return Reply.findAll(filter);
 };
 
-const getRepliesByParentId = async (parentReplyId) => {
-  return Reply.findAll({
+const getRepliesByParentId = async (parentReplyId, pagination = false, page = 1, size = 10) => {
+  const filter = {
     where: { 
       parentReplyId,
       deleted: false
     },
     ...includeRelations,
     order: [['createdAt', 'DESC']]
-  });
+  };
+
+  if (pagination === "true") {
+    const offset = (page - 1) * size;
+    const { count, rows } = await Reply.findAndCountAll({
+      ...filter,
+      limit: parseInt(size),
+      offset
+    });
+
+    return {
+      data: rows,
+      pagination: {
+        page: parseInt(page),
+        size: parseInt(size),
+        totalElements: count,
+        isFirst: page === 1,
+        isLast: page >= Math.ceil(count / size)
+      }
+    };
+  }
+
+  return Reply.findAll(filter);
 };
 
 const getReplyById = async (id) => {

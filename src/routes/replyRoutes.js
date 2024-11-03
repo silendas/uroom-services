@@ -68,11 +68,30 @@ router.get('/post/:postId', replyController.getRepliesByPostId);
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID dari reply parent
+ *       - in: query
+ *         name: pagination
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *         description: Aktifkan/nonaktifkan pagination
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Nomor halaman (hanya bekerja ketika pagination=true)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Jumlah item per halaman (hanya bekerja ketika pagination=true)
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of child replies
+ *         description: Daftar reply berhasil diambil
+ *       404:
+ *         description: Parent reply tidak ditemukan
  */
 router.get('/parent/:parentId', replyController.getRepliesByParentId);
 

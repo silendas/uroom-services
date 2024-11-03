@@ -75,9 +75,27 @@ const getRepliesByPostId = async (req, res) => {
 
 const getRepliesByParentId = async (req, res) => {
   try {
-    const replies = await replyService.getRepliesByParentId(req.params.parentId);
-    const formattedReplies = formatReplyResponse(replies, req.user.id);
+    const { pagination = 'false', page = 1, size = 10 } = req.query;
     
+    const result = await replyService.getRepliesByParentId(
+      req.params.parentId,
+      pagination,
+      parseInt(page),
+      parseInt(size)
+    );
+
+    if (pagination === 'true') {
+      const formattedReplies = formatReplyResponse(result.data, req.user.id);
+      return successResponse(
+        res,
+        responseMessage.PROCESS_SUCCESS.message,
+        formattedReplies,
+        responseMessage.PROCESS_SUCCESS.status,
+        result.pagination
+      );
+    }
+
+    const formattedReplies = formatReplyResponse(result, req.user.id);
     return successResponse(
       res,
       responseMessage.PROCESS_SUCCESS.message,

@@ -7,8 +7,16 @@ const router = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Attachments
+ *   description: Manajemen file dan attachment
+ */
+
+/**
+ * @swagger
  * /{type}/{id}/{fileName}:
  *   get:
+ *     tags: [Attachments]
  *     summary: Serve file langsung
  *     parameters:
  *       - name: type
@@ -41,6 +49,7 @@ router.get("/:type/:id/:fileName", (req, res) => {
  * @swagger
  * /download/{type}/{id}/{fileName}:
  *   get:
+ *     tags: [Attachments]
  *     summary: Download file sebagai attachment
  *     parameters:
  *       - name: type

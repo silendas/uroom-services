@@ -11,7 +11,7 @@ const { uploadFile, deleteFile } = require("../utils/fileHandler");
 
 // Helper untuk menyimpan attachment
 const saveAttachment = async (file, replyId, userId) => {
-  const { fileName, filePath } = await uploadFile(file, "replies", replyId);
+  const { fileName, filePath } = await uploadFile(file, "reply", replyId);
   
   const attachment = await Attachment.create({
     fileName,
@@ -55,7 +55,13 @@ const includeRelations = {
 };
 
 const createReply = async (replyData, files) => {
-  const reply = await Reply.create(replyData);
+  const reply = await Reply.create({
+    postId: replyData.postId,
+    userId: replyData.userId,
+    parentReplyId: replyData.parentReplyId || null,
+    message: replyData.message,
+    createdBy: replyData.createdBy
+  });
   
   if (files?.length) {
     await Promise.all(files.map(file => 

@@ -19,7 +19,7 @@ const createReply = async (req, res) => {
     return successResponse(
       res,
       responseMessage.PROCESS_SUCCESS.message,
-      formattedReply,
+      null,
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {
@@ -90,7 +90,7 @@ const updateReply = async (req, res) => {
     return successResponse(
       res,
       responseMessage.PROCESS_SUCCESS.message,
-      formattedReply,
+      null,
       responseMessage.PROCESS_SUCCESS.status
     );
   } catch (error) {

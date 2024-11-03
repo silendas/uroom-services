@@ -56,7 +56,7 @@ const errorResponse = (res, message, status = 500, errors = null) => {
         value: err.value
       }));
       
-      return res.status(status).json(createResponse(message, status, null, validationErrors));
+      return res.status(400).json(createResponse(message, status, null, validationErrors));
     }
 
     // Handling umum untuk error lainnya

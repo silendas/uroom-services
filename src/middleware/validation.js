@@ -82,8 +82,17 @@ const validateReply = [
     .isInt().withMessage('Post ID must be an integer'),
   body('message').notEmpty().withMessage('Reply message is required'),
   body('parentReplyId')
-    .optional()
-    .isInt().withMessage('Parent reply ID must be an integer'),
+    .optional({ nullable: true })
+    .custom((value) => {
+      if (value === null || value === '') {
+        return true;
+      }
+      const numValue = Number(value);
+      if (!Number.isInteger(numValue) || numValue < 1) {
+        throw new Error('Parent reply ID must be an integer greater than or equal to 1');
+      }
+      return true;
+    }),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

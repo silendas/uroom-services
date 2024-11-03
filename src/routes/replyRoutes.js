@@ -27,11 +27,16 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID dari post yang ingin diambil reply-nya
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of replies
+ *         description: List of replies retrieved successfully
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
  */
 router.get('/post/:postId', replyController.getRepliesByPostId);
 
@@ -75,18 +80,29 @@ router.get('/parent/:parentId', replyController.getRepliesByParentId);
  *             properties:
  *               postId:
  *                 type: integer
+ *                 description: ID post yang akan direply
  *               parentReplyId:
  *                 type: integer
+ *                 description: ID reply parent (opsional, untuk nested reply)
  *               message:
  *                 type: string
+ *                 description: Isi pesan reply
  *               files:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
+ *                 description: File attachments (maksimum 10 file)
+ *     responses:
+ *       201:
+ *         description: Reply created successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Post not found
  */
 router.post('/',
-  upload.array('files', 5),
+  upload.array('files', 10),
   validateReply,
   replyController.createReply
 );
@@ -103,8 +119,43 @@ router.post('/',
  *         required: true
  *         schema:
  *           type: integer
+ *         description: ID dari reply yang akan diupdate
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: Pesan reply yang diupdate
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: File attachments baru (maksimum 5 file)
+ *               removedReplyAttachmentIds:
+ *                 type: string
+ *                 description: |
+ *                   Array ID dari reply_attachments yang akan dihapus dalam format JSON string.
+ *                   Contoh: "[1,2,3]" untuk menghapus attachment dengan ID 1, 2, dan 3.
+ *                   Kirim array kosong "[]" jika tidak ada yang dihapus.
+ *                 example: '"[1,2,3]"'
+ *     responses:
+ *       200:
+ *         description: Reply updated successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Reply not found
+ *       403:
+ *         description: Access denied
  */
 router.put('/:id',
   upload.array('files', 5),

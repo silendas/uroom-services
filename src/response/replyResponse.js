@@ -42,7 +42,8 @@ const formatSingleReply = (reply, currentUserId) => {
     id: ra.id,
     fileName: ra.attachment.fileName,
     filePath: ra.attachment.filePath,
-    url: `${baseUrl}/${ra.attachment.filePath}`
+    url: `${baseUrl}/${ra.attachment.filePath}`,
+    downloadUrl: `${baseUrl}/download/${ra.attachment.filePath}`
   })) || [];
 
   // Hitung likes dan dislikes

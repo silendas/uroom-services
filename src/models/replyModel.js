@@ -32,7 +32,7 @@ class Reply extends BaseModel {
         allowNull: true,
         field: "parent_reply_id",
         references: {
-          model: 'Replies',
+          model: Reply,
           key: 'id'
         }
       },

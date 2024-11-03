@@ -18,6 +18,7 @@ const notFound = require('./handler/notFoundHandler');
 const errorHandler = require('./handler/errorHandler');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const fileRoutes = require("./routes/fileRoutes");
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/replies', auth, replyRoutes);
 app.use('/reply-likes', auth, replyLikeRoutes);
 
 // Home Routes
+app.use("/", fileRoutes);
 app.use('/', homeRoutes);
 
 // Swagger definition
@@ -80,6 +82,8 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+// Tambahkan sebelum route yang menggunakan authentication
+app.use("/api", fileRoutes);
 
 // Middleware untuk rute yang tidak ada
 app.use(notFound);

@@ -59,8 +59,14 @@ const defineAssociations = () => {
   User.hasMany(Reply, { foreignKey: "user_id", as: "replies" });
 
   // Reply & ReplyAttachment Relations
-  Reply.hasMany(ReplyAttachment, { foreignKey: "reply_id", as: "attachments" });
-  ReplyAttachment.belongsTo(Reply, { foreignKey: "reply_id", as: "reply" });
+  Reply.hasMany(ReplyAttachment, { 
+    as: 'ReplyAttachments',
+    foreignKey: 'replyId'
+  });
+  ReplyAttachment.belongsTo(Reply, { 
+    as: 'reply',
+    foreignKey: 'replyId'
+  });
   ReplyAttachment.belongsTo(Attachment, {
     foreignKey: "attachment_id",
     as: "attachment",

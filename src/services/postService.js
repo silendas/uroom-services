@@ -76,12 +76,34 @@ const createPost = async (postData, files) => {
   return post;
 };
 
-const getAllPosts = async () => {
-  return Post.findAll({
+const getAllPosts = async (pagination = false, page = 1, size = 10) => {
+  const filter = {
     where: { deleted: false },
     ...includeRelations,
     order: [['createdAt', 'DESC']]
-  });
+  };
+
+  if (pagination === "true") {
+    const offset = (page - 1) * size;
+    const { count, rows } = await Post.findAndCountAll({
+      ...filter,
+      limit: parseInt(size),
+      offset
+    });
+
+    return {
+      data: rows,
+      pagination: {
+        page: parseInt(page),
+        size: parseInt(size),
+        totalElements: count,
+        isFirst: page === 1,
+        isLast: page >= Math.ceil(count / size)
+      }
+    };
+  }
+
+  return Post.findAll(filter);
 };
 
 const getPostById = async (id) => {

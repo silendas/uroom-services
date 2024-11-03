@@ -28,13 +28,29 @@ const router = express.Router();
  *         schema:
  *           type: integer
  *         description: ID dari post yang ingin diambil reply-nya
+ *       - in: query
+ *         name: pagination
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *         description: Aktifkan/nonaktifkan pagination
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Nomor halaman (hanya bekerja ketika pagination=true)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Jumlah item per halaman (hanya bekerja ketika pagination=true)
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of replies retrieved successfully
+ *         description: Daftar reply berhasil diambil
  *       404:
- *         description: Post not found
+ *         description: Post tidak ditemukan
  *       500:
  *         description: Server error
  */

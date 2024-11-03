@@ -72,8 +72,8 @@ const createReply = async (replyData, files) => {
   return reply;
 };
 
-const getRepliesByPostId = async (postId) => {
-  return Reply.findAll({
+const getRepliesByPostId = async (postId, pagination = false, page = 1, size = 10) => {
+  const filter = {
     where: { 
       postId,
       deleted: false,
@@ -81,7 +81,29 @@ const getRepliesByPostId = async (postId) => {
     },
     ...includeRelations,
     order: [['createdAt', 'DESC']]
-  });
+  };
+
+  if (pagination === "true") {
+    const offset = (page - 1) * size;
+    const { count, rows } = await Reply.findAndCountAll({
+      ...filter,
+      limit: parseInt(size),
+      offset
+    });
+
+    return {
+      data: rows,
+      pagination: {
+        page: parseInt(page),
+        size: parseInt(size),
+        totalElements: count,
+        isFirst: page === 1,
+        isLast: page >= Math.ceil(count / size)
+      }
+    };
+  }
+
+  return Reply.findAll(filter);
 };
 
 const getRepliesByParentId = async (parentReplyId) => {

@@ -23,9 +23,26 @@ const router = express.Router();
  *     summary: Retrieve a list of posts
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: pagination
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *         description: Aktifkan/nonaktifkan pagination
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Nomor halaman (hanya bekerja ketika pagination=true)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: integer
+ *         description: Jumlah item per halaman (hanya bekerja ketika pagination=true)
  *     responses:
  *       200:
- *         description: A list of posts
+ *         description: Daftar post berhasil diambil
  *       500:
  *         description: Server error
  */

@@ -35,9 +35,27 @@ const createReply = async (req, res) => {
 
 const getRepliesByPostId = async (req, res) => {
   try {
-    const replies = await replyService.getRepliesByPostId(req.params.postId);
-    const formattedReplies = formatReplyResponse(replies, req.user.id);
+    const { pagination = 'false', page = 1, size = 10 } = req.query;
     
+    const result = await replyService.getRepliesByPostId(
+      req.params.postId,
+      pagination,
+      parseInt(page),
+      parseInt(size)
+    );
+
+    if (pagination === 'true') {
+      const formattedReplies = formatReplyResponse(result.data, req.user.id);
+      return successResponse(
+        res,
+        responseMessage.PROCESS_SUCCESS.message,
+        formattedReplies,
+        responseMessage.PROCESS_SUCCESS.status,
+        result.pagination
+      );
+    }
+
+    const formattedReplies = formatReplyResponse(result, req.user.id);
     return successResponse(
       res,
       responseMessage.PROCESS_SUCCESS.message,

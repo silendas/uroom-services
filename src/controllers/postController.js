@@ -8,9 +8,26 @@ const fs = require("fs");
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await postService.getAllPosts();
-    const formattedPosts = formatPostResponse(posts, req.user.id);
+    const { pagination = 'false', page = 1, size = 10 } = req.query;
+    
+    const result = await postService.getAllPosts(
+      pagination,
+      parseInt(page),
+      parseInt(size)
+    );
 
+    if (pagination === 'true') {
+      const formattedPosts = formatPostResponse(result.data, req.user.id);
+      return successResponse(
+        res,
+        responseMessage.PROCESS_SUCCESS.message,
+        formattedPosts,
+        responseMessage.PROCESS_SUCCESS.status,
+        result.pagination
+      );
+    }
+
+    const formattedPosts = formatPostResponse(result, req.user.id);
     return successResponse(
       res,
       responseMessage.PROCESS_SUCCESS.message,
